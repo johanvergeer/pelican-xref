@@ -8,7 +8,7 @@ from pelican.contents import Article
 from pelican.generators import ArticlesGenerator
 
 XREF_RE = re.compile(
-    r"(\[xref:([a-zA-Z_-]+)(?:\| ?title=([^|\n\r]+))?(?:\| ?blank=([01]))?\])"
+    r"(\[xref:([a-zA-Z0-9_-]+)(?:\| ?title=([^|\n\r]+))?(?:\| ?blank=([01]))?\])"
 )
 
 logger = logging.getLogger(__name__)

@@ -13,11 +13,11 @@ import pytest
     "md_input,expected",
     [
         ("[xref:abc]", ["abc", None, None]),
-        ("[xref:abc| title=abcd]", ["abc", "abcd", None]),
-        ("[xref:abc| title=abcd| blank=0]", ["abc", "abcd", "0"]),
-        ("[xref:abc| title=abcd| blank=1]", ["abc", "abcd", "1"]),
-        ("[xref:abc|title=abcd|blank=1]", ["abc", "abcd", "1"]),
-        ("[xref:abc| blank=1]", ["abc", None, "1"]),
+        ('[xref:abc title="abcd"]', ["abc", "abcd", None]),
+        ('[xref:abc title="abcd" blank=0]', ["abc", "abcd", "0"]),
+        ('[xref:abc title="abcd" blank=1]', ["abc", "abcd", "1"]),
+        ('[xref:abc title="abcd" blank=1]', ["abc", "abcd", "1"]),
+        ("[xref:abc blank=1]", ["abc", None, "1"]),
     ],
 )
 def test_xref_re(md_input, expected):
@@ -72,7 +72,7 @@ def test_find_references_on_draft__xref_attribute_not_set(articles_generator, ar
 
 
 def test_replace_references__reference_replaced(articles_generator, article_with_xref):
-    article_with_xref._content = "something [xref:abcd| title=Hello, world] amazing"
+    article_with_xref._content = 'something [xref:abcd title="Hello, world"] amazing'
 
     articles_generator.drafts.append(article_with_xref)
 
@@ -89,7 +89,7 @@ def test_replace_references__reference_replaced(articles_generator, article_with
 def test_replace_references__reference_not_found(
     articles_generator, article, logger_warning_mock
 ):
-    article._content = "something [xref:abcd| title=Hello, world] amazing"
+    article._content = 'something [xref:abcd title="Hello, world"] amazing'
 
     articles_generator.drafts.append(article)
 
@@ -97,14 +97,14 @@ def test_replace_references__reference_not_found(
 
     _replace_references(article, references)
 
-    assert article._content == "something [xref:abcd| title=Hello, world] amazing"
+    assert article._content == 'something [xref:abcd title="Hello, world"] amazing'
     logger_warning_mock.assert_called_once_with("No article found with xref 'abcd'")
 
 
 def test_replace_references__reference_to_draft_in_published_article(
     article, logger_warning_mock
 ):
-    article._content = "something [xref:abcd| title=Hello, world] amazing"
+    article._content = 'something [xref:abcd title="Hello, world"] amazing'
     references = {"abcd": Xref("hello-world.html", "draft")}
 
     _replace_references(article, references)
@@ -120,7 +120,7 @@ def test_replace_references__reference_to_draft_in_published_article(
 
 
 def test_replace_references__target_blank(article, logger_warning_mock):
-    article._content = "something [xref:abcd| title=Hello, world| blank=1] amazing"
+    article._content = 'something [xref:abcd title="Hello, world" blank=1] amazing'
     references = {"abcd": Xref("hello-world.html", "published")}
 
     _replace_references(article, references)

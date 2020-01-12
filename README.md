@@ -54,9 +54,9 @@ The `blank` attribute is used in case you want the created link to open a new wi
 Input | Generated html
 --- | ---
 <code>[xref:ref-1]</code> | `<a href="/category/the-first-article">The first article</a>`
-<code>[xref:ref-1&#124; title=Title override]</code> | `<a href="/category/the-first-article">Title override</a>`
-<code>[xref:ref-1&#124; blank=1]</code> | `<a href="/category/the-first-article" target="_blank">The first article</a>`
-<code>[xref:ref-1&#124; title=Title override&#124; blank=1]</code> | `<a href="/category/the-first-article" target="_blank">Title override</a>`
+<code>[xref:ref-1 title="Title override"]</code> | `<a href="/category/the-first-article">Title override</a>`
+<code>[xref:ref-1 blank=1]</code> | `<a href="/category/the-first-article" target="_blank">The first article</a>`
+<code>[xref:ref-1 title="Title override" blank=1]</code> | `<a href="/category/the-first-article" target="_blank">Title override</a>`
 
 ## Installation
 

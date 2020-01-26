@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pelican-xref"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Pelican plugin that allows you to cross-reference articles"
 authors = ["Johan Vergeer <johanvergeer@gmail.com>"]
 license = "MIT"

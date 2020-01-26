@@ -37,7 +37,9 @@ def test_find_references_on_article__xref_attribute_set(
     references = _find_references(articles_generator)
 
     assert len(references) == 1
-    assert references["abcd"] == Xref("hello-world.html", "published")
+    assert references["abcd"] == Xref(
+        "hello-world.html", "published", "First article with xref"
+    )
 
 
 def test_find_references_on_article__xref_attribute_not_set(
@@ -59,7 +61,9 @@ def test_find_references_on_draft__xref_attribute_set(
     references = _find_references(articles_generator)
 
     assert len(references) == 1
-    assert references["abcd"] == Xref("hello-world.html", "draft")
+    assert references["abcd"] == Xref(
+        "hello-world.html", "draft", "First article with xref"
+    )
 
 
 def test_find_references_on_draft__xref_attribute_not_set(articles_generator, article):
@@ -71,19 +75,32 @@ def test_find_references_on_draft__xref_attribute_not_set(articles_generator, ar
     assert len(references) == 0
 
 
-def test_replace_references__reference_replaced(articles_generator, article_with_xref):
-    article_with_xref._content = 'something [xref:abcd title="Hello, world"] amazing'
+@pytest.mark.parametrize(
+    "content,expected",
+    [
+        (
+            'something [xref:abcd title="Hello, world"] amazing',
+            'something <a href="/hello-world.html">Hello, world</a> amazing',
+        ),
+        (
+            "something [xref:abcd] amazing",
+            'something <a href="/hello-world.html">First article with xref</a> amazing',  # Uses title from referenced article
+        ),
+    ],
+)
+def test_replace_references__reference_replaced(
+    article, articles_generator, article_with_xref, content, expected
+):
+    article._content = content
 
+    articles_generator.drafts.append(article)
     articles_generator.drafts.append(article_with_xref)
 
     references = _find_references(articles_generator)
 
-    _replace_references(article_with_xref, references)
+    _replace_references(article, references)
 
-    assert (
-        article_with_xref._content
-        == 'something <a href="/hello-world.html">Hello, world</a> amazing'
-    )
+    assert article_with_xref._content == expected
 
 
 def test_replace_references__reference_not_found(
@@ -105,7 +122,7 @@ def test_replace_references__reference_to_draft_in_published_article(
     article, logger_warning_mock
 ):
     article._content = 'something [xref:abcd title="Hello, world"] amazing'
-    references = {"abcd": Xref("hello-world.html", "draft")}
+    references = {"abcd": Xref("hello-world.html", "draft", "The title")}
 
     _replace_references(article, references)
 
@@ -121,7 +138,7 @@ def test_replace_references__reference_to_draft_in_published_article(
 
 def test_replace_references__target_blank(article, logger_warning_mock):
     article._content = 'something [xref:abcd title="Hello, world" blank=1] amazing'
-    references = {"abcd": Xref("hello-world.html", "published")}
+    references = {"abcd": Xref("hello-world.html", "published", "The title")}
 
     _replace_references(article, references)
 

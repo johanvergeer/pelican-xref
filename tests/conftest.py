@@ -9,6 +9,7 @@ import pytest
 @pytest.fixture()
 def article():
     article = Article(content="")
+    article.title = "First article"
     article.override_url = "hello-world.html"
     article.status = "published"
 
@@ -18,6 +19,7 @@ def article():
 @pytest.fixture()
 def article_with_xref(article):
     article.xref = "abcd"
+    article.title = "First article with xref"
 
     return article
 

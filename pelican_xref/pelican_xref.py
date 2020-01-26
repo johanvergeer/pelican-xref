@@ -8,7 +8,6 @@ from pelican.contents import Article
 from pelican.generators import ArticlesGenerator
 
 XREF_RE = re.compile(
-    # r"(\[xref:([a-zA-Z0-9_-]+)(?:\| ?title=([^|\n\r]+))?(?:\| ?blank=([01]))?\])"
     r'(\[xref:([a-zA-Z0-9_-]+)(?: +title="([^"\n\r]+)")?(?: +blank=([01]))?\])'
 )
 
@@ -21,6 +20,8 @@ class Xref:
     """relative url to the article or draft"""
     status: str
     """'draft' or 'published'"""
+    title: str
+    """Title of the referenced article"""
 
 
 def _find_references(generator: ArticlesGenerator) -> Dict[str, Xref]:
@@ -29,11 +30,11 @@ def _find_references(generator: ArticlesGenerator) -> Dict[str, Xref]:
     article: Article
     for article in generator.articles:
         if hasattr(article, "xref"):
-            references[article.xref] = Xref(article.url, "published")
+            references[article.xref] = Xref(article.url, "published", article.title)
     draft: Article
     for draft in generator.drafts:
         if hasattr(draft, "xref"):
-            references[draft.xref] = Xref(draft.url, "draft")
+            references[draft.xref] = Xref(draft.url, "draft", draft.title)
 
     return references
 
@@ -52,9 +53,9 @@ def _replace_references(article: Article, references: Dict[str, Xref],) -> None:
 
     def replace_reference(match: Match) -> str:
         xref_key = match.group(2)
-        title = match.group(3) if match.group(3) else article.title
         blank = ' target="_blank"' if match.group(4) and match.group(4) == "1" else ""
         reference = references.get(xref_key, None)
+        title = match.group(3) if match.group(3) else reference.title
 
         if reference is None:
             logger.warning(f"No article found with xref '{xref_key}'")

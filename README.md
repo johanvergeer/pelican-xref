@@ -1,3 +1,5 @@
+THIS REPOSITORY IS NO LONGER MAINTAINED
+
 # Pelican Xref: A Plugin for Pelican
 
 A Pelican plugin that allows you to cross-reference articles in an easy way
